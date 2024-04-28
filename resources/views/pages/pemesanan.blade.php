@@ -61,9 +61,13 @@
                     @foreach ($pemesanans as $pemesanan)
                         <tr>
                             <td>{{ $pemesanan->no_nota }}</td>
-                            <td><a style="cursor: pointer;" class="detail-gambar-btn" data-toggle="modal"
-                                    data-target="#gambar-gaun-modal"
-                                    data-gambar="{{ $pemesanan->gaun->gambar }}">{{ $pemesanan->gaun->kode }}</a></td>
+                            @if ($pemesanan->gaun)
+                                <td><a style="cursor: pointer;" class="detail-gambar-btn" data-toggle="modal"
+                                        data-target="#gambar-gaun-modal"
+                                        data-gambar="{{ $pemesanan->gaun->gambar }}">{{ $pemesanan->gaun->kode }}</a></td>
+                            @else
+                                <td>Gaun tidak ditemukan</td>
+                            @endif
                             <td>{{ $pemesanan->tanggal_sewa != '1970-01-01 00:00:00' ? \Carbon\Carbon::parse($pemesanan->tanggal_sewa)->format('d-m-Y') : 'Tanggal tidak terdaftar' }}
                             </td>
                             <td>{{ $pemesanan->tanggal_ambil != '1970-01-01 00:00:00' ? \Carbon\Carbon::parse($pemesanan->tanggal_ambil)->format('d-m-Y') : 'Tanggal tidak terdaftar' }}
