@@ -21,7 +21,7 @@ class PemesananImport implements ToModel, WithStartRow, WithHeadingRow
     public function model(array $row)
     {
         $formatDate = function($value) {
-            return is_numeric($value) ? date('d/m/Y', Date::excelToTimestamp($value)) : '01/01/1970';
+            return is_numeric($value) ? date('Y-m-d', Date::excelToTimestamp($value)) : '01/01/1970';
         };
         if ($row['no_nota'] == null) return;
         if (!Gaun::where('kode', $row['kode'])->exists()) {
