@@ -175,7 +175,7 @@ class GaunController extends Controller
             'kode' => $request->kode,
             'gambar' => $gambar,
             'warna' => $request->warna,
-            'harga' => $request->harga,
+            'harga' => (int)$request->harga,
             'usia' => $request->usia,
         ]);
         return response()->json(['success' => true, 'message' => 'Berhasil membuat gaun baru.']);
@@ -208,14 +208,14 @@ class GaunController extends Controller
                 'kode' => $request->kode,
                 'gambar' => $gambar,
                 'warna' => $request->warna,
-                'harga' => $request->harga,
+                'harga' => (int)$request->harga,
                 'usia' => $request->usia,
             ]);
         } else {
             Gaun::where('kode', $kodeGaun)->update([
                 'kode' => $request->kode,
                 'warna' => $request->warna,
-                'harga' => $request->harga,
+                'harga' => (int)$request->harga,
                 'usia' => $request->usia,
             ]);
         }

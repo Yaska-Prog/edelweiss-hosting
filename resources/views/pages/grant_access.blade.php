@@ -43,7 +43,7 @@
                                 <form action="{{route('grant-access')}}" method="post">
                                     @csrf
                                     <input type="hidden" name="email" value="{{$item->email}}">
-                                    <input type="submit" class="btn btn-primary">
+                                    <button type="submit" class="btn btn-primary">Berikan Akses</button>
                                 </form>
                             </td>
                         </tr>

@@ -64,7 +64,14 @@ class AuthController extends Controller
     public function loginApi(Request $request)
     {
         $user = User::where('email', $request->email)->first();
-
+        $rules = [
+            'email' => 'required',
+            'password' => 'required',
+        ];
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return response()->json(['success' => false, $validator->errors()], 422);
+        }
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json(['success' => false, 'message' => 'Invalid credentials'], 401);
         }
@@ -88,14 +95,15 @@ class AuthController extends Controller
         return response()->json(['success' => true, 'message' => 'Logged out']);
     }
 
-    
+
     public function grantAccessScreen()
     {
         $users = User::where('is_verified', false)->get();
         return view('pages.grant_access', compact('users'));
     }
 
-    public function grantAccess(Request $request){
+    public function grantAccess(Request $request)
+    {
         $request->validate([
             'email' => 'required'
         ]);
