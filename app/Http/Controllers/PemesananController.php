@@ -21,7 +21,8 @@ class PemesananController extends Controller
     {
         $pemesanans = Pemesanan::with('gaun')->get();
         $gauns = Gaun::all();
-        return view('pages.pemesanan', ['pemesanans' => $pemesanans, 'gauns' => $gauns]);
+        $formattedPemesanans = $this->formatTanggalPemesanan($pemesanans);
+        return view('pages.pemesanan', ['pemesanans' => $formattedPemesanans, 'gauns' => $gauns]);
     }
 
     /**
@@ -173,8 +174,22 @@ class PemesananController extends Controller
     public function checkAvailability(Request $request)
     {
         $pemesanan = Pemesanan::orderBy('id', 'DESC');
+        $tanggalAkhir = $request->tanggal_akhir;
+        $tanggalAwal = $request->tanggal_awal;
+        if ($tanggalAkhir == null) {
+            $tanggalAkhir = now();
+        }
         if ($request->gaun != null) $pemesanan->where('gaun_kode', $request->gaun);
-        if ($request->tanggal_awal != null) $pemesanan->whereBetween('tanggal_sewa', [$request->tanggal_awal, $request->tanggal_akhir]);
+        if ($request->tanggal_awal != null) {
+            $pemesanan->where(function ($query) use ($tanggalAwal, $tanggalAkhir) {
+                $query->whereBetween('tanggal_ambil', [$tanggalAwal, $tanggalAkhir])
+                    ->orWhereBetween('tanggal_kembali', [$tanggalAwal, $tanggalAkhir])
+                    ->orWhere(function ($subQuery) use ($tanggalAwal, $tanggalAkhir) {
+                        $subQuery->where('tanggal_ambil', '<=', $tanggalAwal)
+                            ->where('tanggal_kembali', '>=', $tanggalAkhir);
+                    });
+            });
+        }
         $pemesanans = $pemesanan->get();
         if (count($pemesanans) >= 1) {
             $formattedPemesanans = $this->formatPemesananNota($this->formatTanggalPemesanan($pemesanans));
@@ -188,16 +203,17 @@ class PemesananController extends Controller
     public function formatTanggalPemesanan($pemesanans)
     {
         $formattedPemesanans = $pemesanans->map(function ($pemesanan) {
-            $pemesanan->tanggal_sewa = Carbon::parse($pemesanan->tanggal_sewa)->format('d-m-Y');
-            $pemesanan->tanggal_ambil = $pemesanan->tanggal_ambil ? Carbon::parse($pemesanan->tanggal_ambil)->format('d-m-Y') : null;
-            $pemesanan->tanggal_kembali = $pemesanan->tanggal_kembali ? Carbon::parse($pemesanan->tanggal_kembali)->format('d-m-Y') : null;
-            $pemesanan->tanggal_di_ambil = $pemesanan->tanggal_di_ambil ? Carbon::parse($pemesanan->tanggal_di_ambil)->format('d-m-Y') : null;
-            $pemesanan->kembali = $pemesanan->kembali ? Carbon::parse($pemesanan->kembali)->format('d-m-Y') : null;
-            $pemesanan->tanggal_pengembalian_deposit = $pemesanan->tanggal_pengembalian_deposit ? Carbon::parse($pemesanan->tanggal_pengembalian_deposit)->format('d-m-Y') : null;
-            $pemesanan->tanggal_pembayaran = $pemesanan->tanggal_pembayaran ? Carbon::parse($pemesanan->tanggal_pembayaran)->format('d-m-Y') : null;
-            $pemesanan->tanggal_pembayaran_2 = $pemesanan->tanggal_pembayaran_2 ? Carbon::parse($pemesanan->tanggal_pembayaran_2)->format('d-m-Y') : null;
+            $pemesanan->tanggal_sewa = Carbon::parse($pemesanan->tanggal_sewa)->format('d-m-Y') == '01-01-1970' ? 'belum di isikan' : Carbon::parse($pemesanan->tanggal_sewa)->format('d-m-Y');
+            $pemesanan->tanggal_ambil = $pemesanan->tanggal_ambil ? (Carbon::parse($pemesanan->tanggal_ambil)->format('d-m-Y') == '01-01-1970' ? 'belum di isikan' : Carbon::parse($pemesanan->tanggal_ambil)->format('d-m-Y')) : null;
+            $pemesanan->tanggal_kembali = $pemesanan->tanggal_kembali ? (Carbon::parse($pemesanan->tanggal_kembali)->format('d-m-Y') == '01-01-1970' ? 'belum di isikan' : Carbon::parse($pemesanan->tanggal_kembali)->format('d-m-Y')) : null;
+            $pemesanan->tanggal_di_ambil = $pemesanan->tanggal_di_ambil ? (Carbon::parse($pemesanan->tanggal_di_ambil)->format('d-m-Y') == '01-01-1970' ? 'belum di isikan' : Carbon::parse($pemesanan->tanggal_di_ambil)->format('d-m-Y')) : null;
+            $pemesanan->kembali = $pemesanan->kembali ? (Carbon::parse($pemesanan->kembali)->format('d-m-Y') == '01-01-1970' ? 'belum di isikan' : Carbon::parse($pemesanan->kembali)->format('d-m-Y')) : null;
+            $pemesanan->tanggal_pengembalian_deposit = $pemesanan->tanggal_pengembalian_deposit ? (Carbon::parse($pemesanan->tanggal_pengembalian_deposit)->format('d-m-Y') == '01-01-1970' ? 'belum di isikan' : Carbon::parse($pemesanan->tanggal_pengembalian_deposit)->format('d-m-Y')) : null;
+            $pemesanan->tanggal_pembayaran = $pemesanan->tanggal_pembayaran ? (Carbon::parse($pemesanan->tanggal_pembayaran)->format('d-m-Y') == '01-01-1970' ? 'belum di isikan' : Carbon::parse($pemesanan->tanggal_pembayaran)->format('d-m-Y')) : null;
+            $pemesanan->tanggal_pembayaran_2 = $pemesanan->tanggal_pembayaran_2 ? (Carbon::parse($pemesanan->tanggal_pembayaran_2)->format('d-m-Y') == '01-01-1970' ? 'belum di isikan' : Carbon::parse($pemesanan->tanggal_pembayaran_2)->format('d-m-Y')) : null;
             return $pemesanan;
         });
+
         return $formattedPemesanans;
     }
 

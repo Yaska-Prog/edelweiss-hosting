@@ -6,6 +6,11 @@
             <h1 class="title">Dashboard</h1>
         </nav>
     </header>
+    <style>
+        .edit-gaun-btn {
+            margin-right: 20px;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -115,9 +120,43 @@
             </div>
         </div>
     </div>
-    {{-- Edit Here --}}
+
+    <div class="modal fade" id="delete-gaun-modal" tabindex="-1" role="dialog" aria-labelledby="modalDashboardTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="delete-gaun-modal-title">Delete Gaun</h5>
+                </div>
+                <form id="delete-gaun-form" method="POST" action="{{ route('gaun.destroy', 'PLACEHOLDER') }}"
+                    enctype="multipart/form-data">
+                    @method('DELETE')
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group mb-2">
+                            <label class="mb-1" for="password-destroy-gaun">Confirmation Password</label>
+                            <input type="password" class="form-control" id="password-destroy-gaun" name="password"
+                                required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger">Delete Gaun</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
         $(document).ready(function() {
+            function formatCurrency(amount) {
+                if (amount > 0) {
+                    return 'Rp. ' + amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                } else {
+                    return 0;
+                }
+            }
             // Initial load of all gauns
             var gauns = @json($gauns);
             var baseUrl = "{{ asset('storage/') }}";
@@ -150,15 +189,18 @@
                                 '" class="card-img-top" alt="...">' +
                                 '<div class="card-body">' +
                                 '<h5 class="card-title">' + gaun.kode + '</h5>' +
-                                '<h6 class="card-text">Harga Gaun: ' + gaun.harga + '</h6>' +
+                                '<h6 class="card-text">Harga Gaun: ' + formatCurrency(gaun.harga) + '</h6>' +
                                 '<h6 class="card-text">Warna Gaun: ' + gaun.warna + '</h6>' +
                                 '<h6 class="card-text">Usia pengguna Gaun: ' + gaun.usia +
                                 '</h6>' +
                                 '<button type="button" data-toggle="modal" data-target="#edit-gaun-modal" data-gambar="' +
                                 gaun.gambar + '" data-kode="' + gaun.kode + '" data-warna="' +
-                                gaun.warna + '" data-harga="' + gaun.harga + '" data-usia="' +
+                                gaun.warna + '" data-harga="' + formatCurrency(gaun.harga) + '" data-usia="' +
                                 gaun.usia +
-                                '" class="btn btn-primary edit-gaun-btn">Edit Gaun</button>' +
+                                '" class="btn btn-primary edit-gaun-btn">Edit</button>' +
+                                '<button type="button" data-toggle="modal" data-target="#delete-gaun-modal" data-kode="' +
+                                gaun.kode +
+                                '" class="btn btn-danger delete-gaun-btn">Delete</button>' +
                                 '</div>' +
                                 '</div>' +
                                 '</div>' +
@@ -194,8 +236,6 @@
                     renderGauns('');
                 }
             });
-
-            // File input change event handler for previewing image
             $('#gambar-gaun').change(function() {
                 var input = this;
                 if (input.files && input.files[0]) {
@@ -269,6 +309,12 @@
                 displayImagePreview(baseUrl + '/' + gambar, gambar);
 
                 $('#edit-gaun-form').attr('action', '/gaun/' + kode)
+            });
+
+            $(document).on('click', '.delete-gaun-btn', function() {
+                var kode = $(this).data('kode');
+                $('#delete-gaun-modal-title').html('Delete gaun dengan kode ' + kode);
+                $('#delete-gaun-form').attr('action', '/gaun/' + kode)
             });
         });
     </script>

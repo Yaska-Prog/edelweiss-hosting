@@ -6,7 +6,10 @@ use App\Models\Gaun;
 use App\Http\Requests\StoreGaunRequest;
 use App\Http\Requests\UpdateGaunRequest;
 use App\Imports\PemesananImport;
+use App\Models\Pemesanan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
@@ -53,9 +56,9 @@ class GaunController extends Controller
                 'harga' => $request->harga,
                 'usia' => $request->usia,
             ]);
-            return redirect('gaun.create')->with('success', 'Sukses mendaftarkan data gaun');
+            return redirect('gaun/create')->with('success', 'Sukses mendaftarkan data gaun');
         } else {
-            return redirect('gaun.create')->with('fail', 'Gagal mendaftarkan gaun, gambar tidak terdeteksi');
+            return redirect('gaun/create')->with('fail', 'Gagal mendaftarkan gaun, gambar tidak terdeteksi');
         }
     }
 
@@ -121,10 +124,18 @@ class GaunController extends Controller
      * @param  \App\Models\Gaun  $gaun
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Gaun $gaun)
+    public function destroy(Gaun $gaun, Request $request)
     {
-        Gaun::where('kode', $gaun->kode)->delete();
-        return redirect('gaun')->with('success', 'Sukses menghapus data gaun');
+        $user = Auth::user();
+        if (Hash::check($request->password, $user->password)) {
+            $pemesanan = Pemesanan::where('gaun_kode', $gaun->kode)->exists();
+            if ($pemesanan) {
+                return redirect('gaun')->with('fail', 'Gagal menghapus data gaun, terdapat pemesanan yang menggunakan gaun ini.');
+            }
+            Gaun::where('kode', $gaun->kode)->delete();
+            return redirect('gaun')->with('success', 'Sukses menghapus data gaun');
+        }
+        return redirect('gaun')->with('fail', 'Gagal menghapus data gaun, password salah.');
     }
 
     public function uploadExcel(Request $request)
@@ -189,7 +200,7 @@ class GaunController extends Controller
 
     public function updateGaun(Request $request, $kodeGaun)
     {
-        $rules =[
+        $rules = [
             'kode' => 'required',
             'gambar' => ['image', 'mimes:jpeg,png,gif,jpg'],
             'warna' => 'required',

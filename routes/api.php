@@ -25,6 +25,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/get-nota-detail/{kodeNota}', [PemesananController::class, 'getDetailNota']);
     Route::get('/delete-gaun/{kodeGaun}', [GaunController::class, 'deleteGaun']);
     Route::post('/logout', [AuthController::class, 'loginApi']);
+    Route::post('/check-availability', [PemesananController::class, 'checkAvailability']);
 });
 
 Route::post('/login', [AuthController::class, 'loginApi']);

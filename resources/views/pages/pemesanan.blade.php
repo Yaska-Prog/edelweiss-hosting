@@ -68,11 +68,11 @@
                             @else
                                 <td>Gaun tidak ditemukan</td>
                             @endif
-                            <td>{{ $pemesanan->tanggal_sewa != '1970-01-01 00:00:00' ? \Carbon\Carbon::parse($pemesanan->tanggal_sewa)->format('d-m-Y') : 'Tanggal tidak terdaftar' }}
+                            <td>{{ $pemesanan->tanggal_sewa }}
                             </td>
-                            <td>{{ $pemesanan->tanggal_ambil != '1970-01-01 00:00:00' ? \Carbon\Carbon::parse($pemesanan->tanggal_ambil)->format('d-m-Y') : 'Tanggal tidak terdaftar' }}
+                            <td>{{ $pemesanan->tanggal_ambil }}
                             </td>
-                            <td>{{ $pemesanan->tanggal_kembali != '1970-01-01 00:00:00' ? \Carbon\Carbon::parse($pemesanan->tanggal_kembali)->format('d-m-Y') : 'Tanggal tidak terdaftar' }}
+                            <td>{{ $pemesanan->tanggal_kembali }}
                             </td>
                             <td>{{ $pemesanan->nama_penyewa }}</td>
                             <td>{{ $pemesanan->nomor_hp }}</td>
@@ -80,22 +80,22 @@
                             <td class="currency-value">{{ $pemesanan->dp }}</td>
                             <td class="currency-value">{{ $pemesanan->sisa == 0 ? 'Lunas' : $pemesanan->sisa }}</td>
                             <td class="currency-value">{{ $pemesanan->deposit }}</td>
-                            <td>{{ $pemesanan->tanggal_di_ambil != '1970-01-01 00:00:00' ? \Carbon\Carbon::parse($pemesanan->tanggal_di_ambil)->format('d-m-Y') : 'Tanggal tidak terdaftar' }}
+                            <td>{{ $pemesanan->tanggal_di_ambil }}
                             </td>
-                            <td>{{ $pemesanan->kembali != '1970-01-01 00:00:00' ? \Carbon\Carbon::parse($pemesanan->kembali)->format('d-m-Y') : 'Tanggal tidak terdaftar' }}
+                            <td>{{ $pemesanan->kembali }}
                             </td>
                             <td>{{ $pemesanan->nomor_rekening }}</td>
                             <td>{{ $pemesanan->jenis_bank }}</td>
                             <td>{{ $pemesanan->atas_nama_2 }}</td>
-                            <td>{{ $pemesanan->tanggal_pengembalian_deposit != '1970-01-01 00:00:00' ? \Carbon\Carbon::parse($pemesanan->tanggal_pengembalian_deposit)->format('d-m-Y') : 'Tanggal tidak terdaftar' }}
+                            <td>{{ $pemesanan->tanggal_pengembalian_deposit }}
                             </td>
                             <td class="currency-value">{{ $pemesanan->deposit_pengambilan }}</td>
                             <td class="currency-value">{{ $pemesanan->deposit_gaun }}</td>
-                            <td>{{ $pemesanan->tanggal_pembayaran != '1970-01-01 00:00:00' ? \Carbon\Carbon::parse($pemesanan->tanggal_pembayaran)->format('d-m-Y') : 'Tanggal tidak terdaftar' }}
+                            <td>{{ $pemesanan->tanggal_pembayaran }}
                             </td>
                             <td>{{ $pemesanan->via_bayar }}</td>
                             <td>{{ $pemesanan->atas_nama }}</td>
-                            <td>{{ $pemesanan->tanggal_pembayaran_2 != '1970-01-01 00:00:00' ? \Carbon\Carbon::parse($pemesanan->tanggal_pembayaran_2)->format('d-m-Y') : 'Tanggal tidak terdaftar' }}
+                            <td>{{ $pemesanan->tanggal_pembayaran_2 }}
                             </td>
                             <td>{{ $pemesanan->via_bayar_2 }}</td>
                             <td>{{ $pemesanan->atas_nama_22 }}</td>
@@ -285,13 +285,13 @@
             console.log(pemesananId);
             console.log(selectedPemesanan);
             if (selectedPemesanan) {
-                $.each(selectedPemesanan, function(key, value) {
-                    if (value === '1970-01-01 00:00:00') {
-                        // Set value to today's date
-                        selectedPemesanan[key] = new Date().toISOString().slice(0, 16);
-                        console.log(selectedPemesanan[key]);
-                    }
-                });
+                // $.each(selectedPemesanan, function(key, value) {
+                //     if (value === '1970-01-01 00:00:00') {
+                //         // Set value to today's date
+                //         selectedPemesanan[key] = new Date().toISOString().slice(0, 16);
+                //         console.log(selectedPemesanan[key]);
+                //     }
+                // });
                 $('#no-nota').val(selectedPemesanan.no_nota);
                 $('#gaun-kode').val(selectedPemesanan.gaun.kode);
                 $('#tanggal-sewa').val(selectedPemesanan.tanggal_sewa);
