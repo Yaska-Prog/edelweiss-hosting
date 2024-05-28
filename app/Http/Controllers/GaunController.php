@@ -161,7 +161,7 @@ class GaunController extends Controller
     public function getAllGaun(Request $request)
     {
         $gaun = Gaun::orderBy('kode', 'ASC');
-        if ($request->kode != null) $gaun->where('kode', $request->kode);
+        if ($request->kode != null) $gaun->where('kode', 'LIKE', "$request->kode%");
         $gauns = $gaun->get();
         return response()->json(['success' => true, 'gauns' => $gauns]);
     }

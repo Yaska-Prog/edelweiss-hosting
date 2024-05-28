@@ -31,7 +31,6 @@ class UpdatePemesananRequest extends FormRequest
             'nomor_hp' => 'required',
             'harga' => 'required',
             'dp' => 'required',
-            'sisa' => 'required',
         ];
     }
 }

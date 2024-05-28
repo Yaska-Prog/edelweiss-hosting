@@ -46,8 +46,7 @@ class PemesananController extends Controller
     {
         $pemesanans = [];
         foreach ($request['gaun_kode'] as $index => $gaun) {
-            // dd($request['gaun_kode'][$index]);
-            $checkGaun = Pemesanan::where('gaun_kode', $gaun->kode)->where('tanggal_sewa', $request->tanggal_sewa)->exists();
+            $checkGaun = Pemesanan::where('gaun_kode', $gaun)->where('tanggal_sewa', $request->tanggal_sewa)->exists();
             if ($checkGaun) {
                 return redirect()->back()->with('fail', "Gagal mendaftarkan pesanan, gaun dengan kode $gaun->kode telah disewakan pada tanggal tersebut");
             }
@@ -58,31 +57,22 @@ class PemesananController extends Controller
                 'nomor_hp' => $request->nomor_hp,
                 'tanggal_ambil' => $request->tanggal_ambil,
                 'tanggal_kembali' => $request->tanggal_kembali,
-                'gaun_kode' => $request['gaun_kode'][$index],
+                'gaun_kode' => $gaun,
                 'harga' => $request['harga'][$index],
                 'dp' => $request['dp'][$index],
-                'sisa' => $request->sisa,
+                'sisa' => $request['harga'][$index] - $request['dp'][$index],
                 'note' => $request['note'][$index],
-                'tanggal_di_ambil' => $request->tanggal_di_ambil,
-                'kembali' => $request->kembali,
-                'nomor_rekening' => $request->nomor_rekening,
-                'jenis_bank' => $request->jenis_bank,
-                'atas_nama_2' => $request->atas_nama_2,
-                'tanggal_pengembalian_deposit' => $request->tanggal_pengembalian_deposit,
                 'deposit_gaun' => $request['deposit'][$index],
                 'tanggal_pembayaran' => $request->tanggal_pembayaran,
                 'via_bayar' => $request->via_bayar,
                 'atas_nama' => $request->atas_nama,
-                'tanggal_pembayaran_2' => $request->tanggal_pembayaran_2,
-                'via_bayar_2' => $request->via_bayar_2,
-                'atas_nama_22' => $request->atas_nama_22,
-                'nama_sales' => $request->nama_sales,
+                'nama_sales' => $request['nama_sales'][$index],
             ];
             if ($request['is_paid'][$index]) $pemesanan['deposit'] = $request['deposit'][$index];
             else $pemesanan['deposit_pengambilan'] = $request['deposit'][$index];
             $pemesanans[] = $pemesanan;
         }
-        Pemesanan::create($pemesanans);
+        Pemesanan::insert($pemesanans);
         return redirect()->back()->with('success', 'Sukses mendaftarkan data pemesanan');
     }
 
@@ -132,7 +122,7 @@ class PemesananController extends Controller
             'nomor_hp' => $request->nomor_hp,
             'harga' => $request->harga,
             'dp' => $request->dp,
-            'sisa' => $request->sisa,
+            'sisa' => $request->harga - $request->dp,
             'deposit' => $request->deposit,
             'note' => $request->note,
             'tanggal_di_ambil' => $request->tanggal_di_ambil,

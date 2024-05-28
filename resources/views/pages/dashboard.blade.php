@@ -46,8 +46,14 @@
                 </select>
                 <div id="searchInput" class="mt-2">
                     <label class="form-label">Cari Gaun</label>
-                    <input id="searchQuery" type="text" class="form-control" placeholder="Masukkan kode gaun">
-                    <div class="form-text">Masukkan kode gaun</div>
+                    <input id="searchQuery" type="text" class="form-control" placeholder="Masukkan kata kunci">
+                    <div class="form-text">Masukkan kata kunci</div>
+                </div>
+                <div id="warnaSelect" class="mt-2 d-none">
+                    <label class="form-label">Warna Gaun</label>
+                    <div id="warnaCheckboxes" class="form-check">
+                        <!-- Warna checkboxes will be populated here -->
+                    </div>
                 </div>
                 <div id="usiaSelect" class="mt-2 d-none">
                     <label class="form-label">Usia Pengguna Gaun</label>
@@ -157,14 +163,29 @@
                     return 0;
                 }
             }
+
+            function convertCurrencyToValue(currencyString) {
+                // Remove the 'Rp.' prefix
+                let numberString = currencyString.replace('Rp. ', '');
+
+                // Remove the periods used as thousand separators
+                numberString = numberString.replace(/\./g, '');
+
+                // Convert the string to a number
+                let number = parseInt(numberString, 10);
+
+                // Return the number
+                return number;
+            }
+
             // Initial load of all gauns
             var gauns = @json($gauns);
             var baseUrl = "{{ asset('storage/') }}";
+            var warnaValues = [...new Set(gauns.map(gaun => gaun.warna))];
 
             // Function to render gauns based on search query
-            function renderGauns(query, usia = null) {
+            function renderGauns(query, usia = null, selectedWarnas = []) {
                 var selectedAttribute = $('#search-gaun-param').val();
-                console.log(selectedAttribute);
                 $('#loadingIndicator').removeClass('d-none');
                 $('#gaunList').addClass('d-none');
                 setTimeout(function() {
@@ -173,6 +194,9 @@
                     var filteredGauns = gauns.filter(function(gaun) {
                         if (selectedAttribute == 'usia') {
                             return gaun[selectedAttribute].toLowerCase() == usia.toLowerCase();
+                        } else if (selectedAttribute == 'warna') {
+                            return selectedWarnas.length === 0 || selectedWarnas.includes(gaun[
+                                selectedAttribute]);
                         } else {
                             return gaun[selectedAttribute].toLowerCase().includes(query
                                 .toLowerCase());
@@ -189,13 +213,15 @@
                                 '" class="card-img-top" alt="...">' +
                                 '<div class="card-body">' +
                                 '<h5 class="card-title">' + gaun.kode + '</h5>' +
-                                '<h6 class="card-text">Harga Gaun: ' + formatCurrency(gaun.harga) + '</h6>' +
+                                '<h6 class="card-text">Harga Gaun: ' + formatCurrency(gaun
+                                    .harga) + '</h6>' +
                                 '<h6 class="card-text">Warna Gaun: ' + gaun.warna + '</h6>' +
                                 '<h6 class="card-text">Usia pengguna Gaun: ' + gaun.usia +
                                 '</h6>' +
                                 '<button type="button" data-toggle="modal" data-target="#edit-gaun-modal" data-gambar="' +
                                 gaun.gambar + '" data-kode="' + gaun.kode + '" data-warna="' +
-                                gaun.warna + '" data-harga="' + formatCurrency(gaun.harga) + '" data-usia="' +
+                                gaun.warna + '" data-harga="' + formatCurrency(gaun.harga) +
+                                '" data-usia="' +
                                 gaun.usia +
                                 '" class="btn btn-primary edit-gaun-btn">Edit</button>' +
                                 '<button type="button" data-toggle="modal" data-target="#delete-gaun-modal" data-kode="' +
@@ -229,6 +255,40 @@
                     $('#usiaOption').on('change', function() {
                         var usiaValue = $(this).val();
                         renderGauns('', usiaValue);
+                    });
+                } else if (selectedValue == 'warna') {
+                    $('#warnaCheckboxes').empty();
+                    let rows = [];
+                    let row = [];
+                    $('#searchInput').addClass('d-none');
+                    $('#usiaSelect').addClass('d-none');
+                    $('#warnaSelect').removeClass('d-none');
+
+                    // Render warna checkboxes
+                    $('#warnaCheckboxes').empty();
+                    warnaValues.forEach(function(warna, index) {
+                        row.push(`
+                            <div class="col">
+                                <div class="form-check">
+                                    <input class="form-check-input warna-checkbox" type="checkbox" value="${warna}" id="warna-${warna}">
+                                    <label class="form-check-label" for="warna-${warna}">${warna}</label>
+                                </div>
+                            </div>
+                        `);
+
+                        if ((index + 1) % 3 === 0 || index === warnaValues.length - 1) {
+                            rows.push(
+                                `<div class="row justify-content-center">${row.join('')}</div>`);
+                            row = [];
+                        }
+                    });
+                    $('#warnaCheckboxes').html(rows.join(''));
+                    // Handle checkbox change event
+                    $('.warna-checkbox').on('change', function() {
+                        var selectedWarnas = $('.warna-checkbox:checked').map(function() {
+                            return $(this).val();
+                        }).get();
+                        renderGauns('', null, selectedWarnas);
                     });
                 } else {
                     $('#searchInput').removeClass('d-none');
@@ -302,7 +362,7 @@
 
                 $('#edit-gaun-modal #kode-gaun').val(kode);
                 $('#edit-gaun-modal #warna-gaun').val(warna);
-                $('#edit-gaun-modal #harga-gaun').val(harga);
+                $('#edit-gaun-modal #harga-gaun').val(convertCurrencyToValue(harga));
                 $('#edit-gaun-modal #usia-gaun').val(usia);
 
                 // Display existing image

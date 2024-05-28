@@ -127,11 +127,11 @@
                     <div class="modal-body">
                         <div class="form-group mb-2">
                             <label class="mb-1" for="no-nota">Nomor Nota</label>
-                            <input type="text" class="form-control" id="no-nota" name="no_nota" required>
+                            <input type="text" class="form-control" id="no-nota" name="no_nota">
                         </div>
                         <div class="form-group mb-2">
                             <label class="mb-1" for="gaun-kode">Kode Gaun</label>
-                            <select class="form-select" name="gaun_kode" id="gaun-kode" required>
+                            <select class="form-select" name="gaun_kode" id="gaun-kode">
                                 @foreach ($gauns as $gaun)
                                     <option value="{{ $gaun->kode }}">{{ $gaun->kode }} </option>
                                 @endforeach
@@ -139,36 +139,31 @@
                         </div>
                         <div class="form-group mb-2">
                             <label class="mb-1" for="tanggal-sewa">Tanggal Sewa</label>
-                            <input type="datetime-local" class="form-control" id="tanggal-sewa" name="tanggal_sewa"
-                                required>
+                            <input type="date" class="form-control" id="tanggal-sewa" name="tanggal_sewa">
                         </div>
                         <div class="form-group mb-2">
                             <label class="mb-1" for="tanggal-ambil">Tanggal Ambil</label>
-                            <input type="datetime-local" class="form-control" id="tanggal-ambil" name="tanggal_ambil">
+                            <input type="date" class="form-control" id="tanggal-ambil" name="tanggal_ambil">
                         </div>
                         <div class="form-group mb-2">
                             <label class="mb-1" for="tanggal-kembali">Tanggal Kembali</label>
-                            <input type="datetime-local" class="form-control" id="tanggal-kembali" name="tanggal_kembali">
+                            <input type="date" class="form-control" id="tanggal-kembali" name="tanggal_kembali">
                         </div>
                         <div class="form-group mb-2">
                             <label class="mb-1" for="nama-penyewa">Nama Penyewa</label>
-                            <input type="text" class="form-control" id="nama-penyewa" name="nama_penyewa" required>
+                            <input type="text" class="form-control" id="nama-penyewa" name="nama_penyewa">
                         </div>
                         <div class="form-group mb-2">
                             <label class="mb-1" for="nomor-hp">Nomor HP</label>
-                            <input type="text" class="form-control" id="nomor-hp" name="nomor_hp" required>
+                            <input type="text" class="form-control" id="nomor-hp" name="nomor_hp">
                         </div>
                         <div class="form-group mb-2">
                             <label class="mb-1" for="harga">Harga</label>
-                            <input type="number" class="form-control" id="harga" name="harga" required>
+                            <input type="number" class="form-control" id="harga" name="harga">
                         </div>
                         <div class="form-group mb-2">
                             <label class="mb-1" for="dp">DP</label>
-                            <input type="number" class="form-control" id="dp" name="dp" required>
-                        </div>
-                        <div class="form-group mb-2">
-                            <label class="mb-1" for="sisa">Sisa</label>
-                            <input type="number" class="form-control" id="sisa" name="sisa" required>
+                            <input type="number" class="form-control" id="dp" name="dp">
                         </div>
                         <div class="form-group mb-2">
                             <label class="mb-1" for="deposit">Deposit</label>
@@ -180,12 +175,11 @@
                         </div>
                         <div class="form-group mb-2">
                             <label class="mb-1" for="tanggal-di-ambil">Tanggal Diambil</label>
-                            <input type="datetime-local" class="form-control" id="tanggal-di-ambil"
-                                name="tanggal_di_ambil">
+                            <input type="date" class="form-control" id="tanggal-di-ambil" name="tanggal_di_ambil">
                         </div>
                         <div class="form-group mb-2">
                             <label class="mb-1" for="kembali">Kembali</label>
-                            <input type="datetime-local" class="form-control" id="kembali" name="kembali">
+                            <input type="date" class="form-control" id="kembali" name="kembali">
                         </div>
                         <div class="form-group mb-2">
                             <label class="mb-1" for="nomor-rekening">Nomor Rekening</label>
@@ -201,7 +195,7 @@
                         </div>
                         <div class="form-group mb-2">
                             <label class="mb-1" for="tanggal-pengembalian-deposit">Tanggal Pengembalian Deposit</label>
-                            <input type="datetime-local" class="form-control" id="tanggal-pengembalian-deposit"
+                            <input type="date" class="form-control" id="tanggal-pengembalian-deposit"
                                 name="tanggal_pengembalian_deposit">
                         </div>
                         <div class="form-group mb-2">
@@ -215,7 +209,7 @@
                         </div>
                         <div class="form-group mb-2">
                             <label class="mb-1" for="tanggal-pembayaran">Tanggal Pembayaran</label>
-                            <input type="datetime-local" class="form-control" id="tanggal-pembayaran"
+                            <input type="date" class="form-control" id="tanggal-pembayaran"
                                 name="tanggal_pembayaran">
                         </div>
                         <div class="form-group mb-2">
@@ -228,7 +222,7 @@
                         </div>
                         <div class="form-group mb-2">
                             <label class="mb-1" for="tanggal-pembayaran-2">Tanggal Pembayaran 2</label>
-                            <input type="datetime-local" class="form-control" id="tanggal-pembayaran-2"
+                            <input type="date" class="form-control" id="tanggal-pembayaran-2"
                                 name="tanggal_pembayaran_2">
                         </div>
                         <div class="form-group mb-2">
@@ -273,6 +267,18 @@
                 return 0;
             }
         }
+
+        function convertDate(dateString) {
+            // Split the input date string into an array [day, month, year]
+            let dateParts = dateString.split('-');
+
+            // Reorder the array to [year, month, day]
+            let formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+
+            // Return the new formatted date string
+            return formattedDate;
+        }
+
         $('.currency-value').each(function() {
             let amount = parseInt($(this).text());
             $(this).text(formatCurrency(amount));
@@ -281,10 +287,12 @@
         var pemesananId;
         $('.btn-edit-pemesanan').click(function() {
             pemesananId = $(this).data('pemesanan-id');
+            $('#edit-pemesanan-form').attr('action', '/pemesanan/' + pemesananId);
             let selectedPemesanan = pemesanans.find(p => p.id == pemesananId);
             console.log(pemesananId);
             console.log(selectedPemesanan);
             if (selectedPemesanan) {
+                console.log(convertDate(selectedPemesanan.tanggal_sewa));
                 // $.each(selectedPemesanan, function(key, value) {
                 //     if (value === '1970-01-01 00:00:00') {
                 //         // Set value to today's date
@@ -294,9 +302,9 @@
                 // });
                 $('#no-nota').val(selectedPemesanan.no_nota);
                 $('#gaun-kode').val(selectedPemesanan.gaun.kode);
-                $('#tanggal-sewa').val(selectedPemesanan.tanggal_sewa);
-                $('#tanggal-ambil').val(selectedPemesanan.tanggal_ambil);
-                $('#tanggal-kembali').val(selectedPemesanan.tanggal_kembali);
+                $('#tanggal-sewa').val(convertDate(selectedPemesanan.tanggal_sewa));
+                $('#tanggal-ambil').val(convertDate(selectedPemesanan.tanggal_ambil));
+                $('#tanggal-kembali').val(convertDate(selectedPemesanan.tanggal_kembali));
                 $('#nama-penyewa').val(selectedPemesanan.nama_penyewa);
                 $('#nomor-hp').val(selectedPemesanan.nomor_hp);
                 $('#harga').val(selectedPemesanan.harga);
@@ -304,22 +312,21 @@
                 $('#sisa').val(selectedPemesanan.sisa);
                 $('#deposit').val(selectedPemesanan.deposit);
                 $('#note').val(selectedPemesanan.note);
-                $('#tanggal-di-ambil').val(selectedPemesanan.tanggal_di_ambil);
+                $('#tanggal-di-ambil').val(convertDate(selectedPemesanan.tanggal_di_ambil));
                 $('#kembali').val(selectedPemesanan.kembali);
                 $('#nomor-rekening').val(selectedPemesanan.nomor_rekening);
                 $('#jenis-bank').val(selectedPemesanan.jenis_bank);
                 $('#atas-nama-2').val(selectedPemesanan.atas_nama_2);
-                $('#tanggal-pengembalian-deposit').val(selectedPemesanan.tanggal_pengembalian_deposit);
+                $('#tanggal-pengembalian-deposit').val(convertDate(selectedPemesanan.tanggal_pengembalian_deposit));
                 $('#deposit-pengambilan').val(selectedPemesanan.deposit_pengambilan);
                 $('#deposit-gaun').val(selectedPemesanan.deposit_gaun);
-                $('#tanggal-pembayaran').val(selectedPemesanan.tanggal_pembayaran);
+                $('#tanggal-pembayaran').val(convertDate(selectedPemesanan.tanggal_pembayaran));
                 $('#via-bayar').val(selectedPemesanan.via_bayar);
                 $('#atas-nama').val(selectedPemesanan.atas_nama);
-                $('#tanggal-pembayaran-2').val(selectedPemesanan.tanggal_pembayaran_2);
+                $('#tanggal-pembayaran-2').val(convertDate(selectedPemesanan.tanggal_pembayaran_2));
                 $('#via-bayar-2').val(selectedPemesanan.via_bayar_2);
                 $('#atas-nama-22').val(selectedPemesanan.atas_nama_22);
                 $('#nama-sales').val(selectedPemesanan.nama_sales);
-                $('#edit-pemesanan-form').attr('action', '/pemesanan/' + pemesananId);
                 // $('#edit-pemesanan-modal').modal('show');
             }
         });
