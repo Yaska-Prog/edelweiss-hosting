@@ -23,81 +23,67 @@
             {{ session('success') }}
         </div>
     @endif
-    <div class="row">
-        <div class="card">
-            {{-- please add the input here --}}
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <label class="mb-1" for="gaun-kode">Kode Gaun</label> <br>
-                    <select id="select-gaun" class="form-select gaun-select" name="gaun_kode" required>
-                        @foreach ($gauns as $gaun)
-                            <option value="{{ $gaun->kode }}" data-image="{{ asset('storage/' . $gaun->gambar) }}">
-                                {{ $gaun->kode }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="mb-1" for="gaun-kode">Tanggal awal filter</label> <br>
-                    <input type="date" class="form-control" id="tanggal-awal" placeholder="Start Date">
-                </div>
-                <div class="col-md-3">
-                    <label class="mb-1" for="gaun-kode">Tanggal akhir filter</label> <br>
-                    <input type="date" class="form-control" id="tanggal-akhir" placeholder="End Date">
-                </div>
-                <br>
-                <button class="btn btn-success" id="check-availability">Check Availability</button>
-            </div>
-            {{-- Modify this --}}
-            <h5 id="availability-status"></h5>
-            <table class="table display nowrap" id="pemesanan-table-availability" style="width: 80%;">
-                <thead>
-                    <tr>
-                        <th>Nomor Nota</th>
-                        <th>Kode Gaun</th>
-                        <th>Tanggal Sewa</th>
-                        <th>Tanggal Ambil</th>
-                        <th>Tanggal Kembali</th>
-                        <th>Nama Penyewa</th>
-                        <th>Nomor HP</th>
-                        <th>Harga</th>
-                        <th>DP</th>
-                        <th>Sisa</th>
-                        <th>Deposit</th>
-                        {{-- <th>Tanggal Diambil</th>
-                        <th>Kembali</th>
-                        <th>Nomor Rekening</th>
-                        <th>Jenis Bank</th>
-                        <th>Atas Nama (2)</th>
-                        <th>Tanggal Pengembalian Deposit</th>
-                        <th>Deposit Pengambilan</th>
-                        <th>Deposit Gaun</th>
-                        <th>Tanggal Pembayaran</th>
-                        <th>Via Bayar</th>
-                        <th>Atas Nama</th>
-                        <th>Tanggal Pembayaran 2</th>
-                        <th>Via Bayar 2</th>
-                        <th>Atas nama (22)</th> --}}
-                        <th>Nama Sales</th>
-                    </tr>
-                </thead>
-            </table>
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label class="mb-1" for="gaun-kode">Kode Gaun</label> <br>
+            <select id="select-gaun" class="form-select gaun-select" name="gaun_kode" required>
+                @foreach ($gauns as $gaun)
+                    <option value="{{ $gaun->kode }}" data-image="{{ asset('storage/' . $gaun->gambar) }}">
+                        {{ $gaun->kode }}</option>
+                @endforeach
+            </select>
         </div>
+        <div class="col-md-3">
+            <label class="mb-1" for="gaun-kode">Tanggal awal filter</label> <br>
+            <input type="date" class="form-control" id="tanggal-awal" placeholder="Start Date">
+        </div>
+        <div class="col-md-3">
+            <label class="mb-1" for="gaun-kode">Tanggal akhir filter</label> <br>
+            <input type="date" class="form-control" id="tanggal-akhir" placeholder="End Date">
+        </div>
+        <br>
+        <button class="btn btn-success" id="check-availability">Check Availability</button>
     </div>
-
-    <div class="modal fade" id="gambar-gaun-modal" tabindex="-1" role="dialog" aria-labelledby="modalDashboardTitle"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Gambar Gaun</h5>
-                </div>
-                <img src="" alt="gambar-gaun" id="detail-gambar-gaun-availability">
+    <h5 id="availability-status"></h5>
+    <div id="availability-details" style="display: none;">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <table class="table" style="width: 100%;">
+                    <tr>
+                        <th>Kode</th>
+                        <td id="gaun-kode"></td>
+                    </tr>
+                    <tr>
+                        <th>Warna</th>
+                        <td id="gaun-warna"></td>
+                    </tr>
+                    <tr>
+                        <th>Harga</th>
+                        <td id="gaun-harga"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <img src="" alt="gambar-gaun" id="detail-gambar-gaun-availability"
+                    style="max-width: 100%; max-height: 300px;">
             </div>
         </div>
+        <table class="table display nowrap" id="pemesanan-table-availability" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th>Nomor Nota</th>
+                    <th>Nama Penyewa</th>
+                    <th>Nomor HP</th>
+                    <th>Tanggal Ambil</th>
+                    <th>Tanggal Kembali</th>
+                </tr>
+            </thead>
+        </table>
     </div>
 
     <script>
         $(document).ready(function() {
+            const gauns = @json($gauns);
             $('.gaun-select').select2({
                 templateResult: formatOption,
                 templateSelection: formatSelection
@@ -106,53 +92,11 @@
             function formatCurrency(amount) {
                 return 'Rp. ' + amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
             }
-            var table = $('#pemesanan-table-availability').DataTable({
-                scrollX: true,
-                columns: [{
-                        data: 'no_nota'
-                    },
-                    {
-                        data: 'gaun_kode'
-                    },
-                    {
-                        data: 'tanggal_sewa'
-                    },
-                    {
-                        data: 'tanggal_ambil'
-                    },
-                    {
-                        data: 'tanggal_kembali'
-                    },
-                    {
-                        data: 'nama_penyewa'
-                    },
-                    {
-                        data: 'nomor_hp'
-                    },
-                    {
-                        data: 'harga'
-                    },
-                    {
-                        data: 'dp'
-                    },
-                    {
-                        data: 'sisa'
-                    },
-                    {
-                        data: 'deposit'
-                    },
-                    {
-                        data: 'nama_sales'
-                    }
-                ],
-            });
 
             $('#check-availability').click(function() {
                 var gaun = $('#select-gaun').val();
                 var tanggalAwal = $('#tanggal-awal').val();
                 var tanggalAkhir = $('#tanggal-akhir').val();
-                console.log(gaun);
-                console.log(tanggalAkhir);
 
                 $('body').addClass('loading');
 
@@ -166,33 +110,61 @@
                         tanggal_akhir: tanggalAkhir
                     },
                     success: function(response) {
-                        // Hide loading indicator
                         $('body').removeClass('loading');
 
-                        // Clear table body
+                        $('#availability-details').hide();
                         table.clear().draw();
+
+                        var selectedGaun = gauns.find(g => g.kode === gaun);
+                        showGaunDetails(selectedGaun);
+
                         if (response.is_available) {
-                            // Gaun is available
                             $('#availability-status').html(
                                 '<h5 style="color: green;">Available</h5>');
                         } else {
-                            // Gaun is not available
                             $('#availability-status').html(
                                 '<h5 style="color: red;">Not Available</h5>');
                             var formattedData = response.data.map(function(row) {
-                                // Format integer attributes into currency
-                                console.log(row);
-                                row.harga = row.harga === null ? 'Lunas' : formatCurrency(row.harga);
-                                row.dp = row.dp === null ? 'Lunas' : formatCurrency(row.dp);
-                                row.sisa = row.sisa === null ? 'Lunas' : formatCurrency(row.sisa);
-                                row.deposit = row.deposit === null ? 'Lunas' : formatCurrency(row.deposit);
-                                return row;
+                                return [
+                                    row.no_nota,
+                                    row.nama_penyewa,
+                                    row.nomor_hp,
+                                    row.tanggal_ambil,
+                                    row.tanggal_kembali
+                                ];
                             });
-                            // Populate table with unavailable data
                             table.rows.add(formattedData).draw();
                         }
                     }
                 });
+            });
+
+            function showGaunDetails(gaun) {
+                $('#gaun-kode').text(gaun.kode);
+                $('#gaun-warna').text(gaun.warna);
+                $('#gaun-harga').text(formatCurrency(gaun.harga));
+                $('#detail-gambar-gaun-availability').attr("src", "{{ asset('storage/') }}/" + gaun.gambar);
+                $('#availability-details').show();
+            }
+
+            var table = $('#pemesanan-table-availability').DataTable({
+                scrollX: true,
+                columns: [{
+                        data: 0
+                    },
+                    {
+                        data: 1
+                    },
+                    {
+                        data: 2
+                    },
+                    {
+                        data: 3
+                    },
+                    {
+                        data: 4
+                    }
+                ]
             });
 
             function formatOption(option) {
@@ -215,12 +187,6 @@
             // Hide image preview on select close
             $('.select2-dropdown').on('select2:close', function() {
                 $('.select2-results__option--highlighted img').hide();
-            });
-
-            var baseUrl = "{{ asset('storage/') }}";
-            $(document).on('click', '.detail-gambar-btn', function() {
-                var gambar = $(this).data('gambar');
-                $('#detail-gambar-gaun-availability').attr("src", baseUrl + '/' + gambar)
             });
         });
     </script>

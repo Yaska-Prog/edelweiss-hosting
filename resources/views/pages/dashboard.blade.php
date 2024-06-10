@@ -127,6 +127,20 @@
         </div>
     </div>
 
+    <div class="modal fade" id="image-preview-modal" role="dialog" aria-labelledby="imagePreviewModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imagePreviewModalLabel">Image Preview</h5>
+            </div>
+            <div class="modal-content">
+                <div class="modal-body">
+                    <img id="image-preview-modal-img" src="" class="img-fluid" alt="Image Preview">
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="delete-gaun-modal" tabindex="-1" role="dialog" aria-labelledby="modalDashboardTitle"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -205,12 +219,13 @@
                     if (filteredGauns.length > 0) {
                         $('#gaunList').removeClass('d-none');
                         filteredGauns.forEach(function(gaun) {
+                            // Card Component
                             $('#gaunList').append(
                                 '<div class="col-md-4">' +
                                 '<div class="card-body">' +
                                 '<div class="card">' +
                                 '<img src="' + baseUrl + '/' + gaun.gambar +
-                                '" class="card-img-top" alt="...">' +
+                                '" class="card-img-top gaun-img" alt="..." data-toggle="modal" data-target="#image-preview-modal">' +
                                 '<div class="card-body">' +
                                 '<h5 class="card-title">' + gaun.kode + '</h5>' +
                                 '<h6 class="card-text">Harga Gaun: ' + formatCurrency(gaun
@@ -375,6 +390,13 @@
                 var kode = $(this).data('kode');
                 $('#delete-gaun-modal-title').html('Delete gaun dengan kode ' + kode);
                 $('#delete-gaun-form').attr('action', '/gaun/' + kode)
+            });
+
+            // Handling image preview modal
+            $(document).on('click', '.gaun-img', function() {
+                var imgSrc = $(this).attr('src');
+                $('#image-preview-modal-img').attr('src', imgSrc);
+                $('#image-preview-modal').modal('show');
             });
         });
     </script>

@@ -341,14 +341,14 @@
                 // Get the values of tanggal_ambil and tanggal_kembali
                 const tanggalAmbil = data[11];
                 const tanggalKembali = data[12];
-
                 // Check if both tanggal_ambil and tanggal_kembali are null or not
-                if (tanggalAmbil != "Tanggal tidak terdaftar" && tanggalKembali !=
-                    "Tanggal tidak terdaftar") {
+                if (tanggalAmbil != "belum di isikan" && tanggalKembali !=
+                    "belum di isikan") {
                     // Highlight the row with green color
                     $(row).css('background-color', 'lightgreen');
-                } else if (tanggalAmbil != "Tanggal tidak terdaftar" && tanggalKembali ==
-                    "Tanggal tidak terdaftar") {
+                } else if (tanggalAmbil != "belum di isikan" && tanggalKembali ==
+                    "belum di isikan") {
+                    console.log(tanggalKembali);
                     // Highlight the row with red color
                     $(row).css('background-color', 'yellow');
                 } else {

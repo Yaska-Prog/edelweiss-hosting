@@ -194,13 +194,13 @@ class PemesananController extends Controller
     {
         $formattedPemesanans = $pemesanans->map(function ($pemesanan) {
             $pemesanan->tanggal_sewa = Carbon::parse($pemesanan->tanggal_sewa)->format('d-m-Y') == '01-01-1970' ? 'belum di isikan' : Carbon::parse($pemesanan->tanggal_sewa)->format('d-m-Y');
-            $pemesanan->tanggal_ambil = $pemesanan->tanggal_ambil ? (Carbon::parse($pemesanan->tanggal_ambil)->format('d-m-Y') == '01-01-1970' ? 'belum di isikan' : Carbon::parse($pemesanan->tanggal_ambil)->format('d-m-Y')) : null;
-            $pemesanan->tanggal_kembali = $pemesanan->tanggal_kembali ? (Carbon::parse($pemesanan->tanggal_kembali)->format('d-m-Y') == '01-01-1970' ? 'belum di isikan' : Carbon::parse($pemesanan->tanggal_kembali)->format('d-m-Y')) : null;
-            $pemesanan->tanggal_di_ambil = $pemesanan->tanggal_di_ambil ? (Carbon::parse($pemesanan->tanggal_di_ambil)->format('d-m-Y') == '01-01-1970' ? 'belum di isikan' : Carbon::parse($pemesanan->tanggal_di_ambil)->format('d-m-Y')) : null;
-            $pemesanan->kembali = $pemesanan->kembali ? (Carbon::parse($pemesanan->kembali)->format('d-m-Y') == '01-01-1970' ? 'belum di isikan' : Carbon::parse($pemesanan->kembali)->format('d-m-Y')) : null;
-            $pemesanan->tanggal_pengembalian_deposit = $pemesanan->tanggal_pengembalian_deposit ? (Carbon::parse($pemesanan->tanggal_pengembalian_deposit)->format('d-m-Y') == '01-01-1970' ? 'belum di isikan' : Carbon::parse($pemesanan->tanggal_pengembalian_deposit)->format('d-m-Y')) : null;
-            $pemesanan->tanggal_pembayaran = $pemesanan->tanggal_pembayaran ? (Carbon::parse($pemesanan->tanggal_pembayaran)->format('d-m-Y') == '01-01-1970' ? 'belum di isikan' : Carbon::parse($pemesanan->tanggal_pembayaran)->format('d-m-Y')) : null;
-            $pemesanan->tanggal_pembayaran_2 = $pemesanan->tanggal_pembayaran_2 ? (Carbon::parse($pemesanan->tanggal_pembayaran_2)->format('d-m-Y') == '01-01-1970' ? 'belum di isikan' : Carbon::parse($pemesanan->tanggal_pembayaran_2)->format('d-m-Y')) : null;
+            $pemesanan->tanggal_ambil = $pemesanan->tanggal_ambil ? (Carbon::parse($pemesanan->tanggal_ambil)->format('d-m-Y') == '01-01-1970' ? 'belum di isikan' : Carbon::parse($pemesanan->tanggal_ambil)->format('d-m-Y')) : 'belum di isikan';
+            $pemesanan->tanggal_kembali = $pemesanan->tanggal_kembali ? (Carbon::parse($pemesanan->tanggal_kembali)->format('d-m-Y') == '01-01-1970' ? 'belum di isikan' : Carbon::parse($pemesanan->tanggal_kembali)->format('d-m-Y')) : 'belum di isikan';
+            $pemesanan->tanggal_di_ambil = $pemesanan->tanggal_di_ambil ? (Carbon::parse($pemesanan->tanggal_di_ambil)->format('d-m-Y') == '01-01-1970' ? 'belum di isikan' : Carbon::parse($pemesanan->tanggal_di_ambil)->format('d-m-Y')) : 'belum di isikan';
+            $pemesanan->kembali = $pemesanan->kembali ? (Carbon::parse($pemesanan->kembali)->format('d-m-Y') == '01-01-1970' ? 'belum di isikan' : Carbon::parse($pemesanan->kembali)->format('d-m-Y')) : 'belum di isikan';
+            $pemesanan->tanggal_pengembalian_deposit = $pemesanan->tanggal_pengembalian_deposit ? (Carbon::parse($pemesanan->tanggal_pengembalian_deposit)->format('d-m-Y') == '01-01-1970' ? 'belum di isikan' : Carbon::parse($pemesanan->tanggal_pengembalian_deposit)->format('d-m-Y')) : 'belum di isikan';
+            $pemesanan->tanggal_pembayaran = $pemesanan->tanggal_pembayaran ? (Carbon::parse($pemesanan->tanggal_pembayaran)->format('d-m-Y') == '01-01-1970' ? 'belum di isikan' : Carbon::parse($pemesanan->tanggal_pembayaran)->format('d-m-Y')) : 'belum di isikan';
+            $pemesanan->tanggal_pembayaran_2 = $pemesanan->tanggal_pembayaran_2 ? (Carbon::parse($pemesanan->tanggal_pembayaran_2)->format('d-m-Y') == '01-01-1970' ? 'belum di isikan' : Carbon::parse($pemesanan->tanggal_pembayaran_2)->format('d-m-Y')) : 'belum di isikan';
             return $pemesanan;
         });
 
