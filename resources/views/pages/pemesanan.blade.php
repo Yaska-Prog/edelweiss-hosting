@@ -23,6 +23,11 @@
             {{ session('success') }}
         </div>
     @endif
+    @if (session('fail'))
+        <div class="alert alert-danger">
+            {{ session('fail') }}
+        </div>
+    @endif
     <div class="row">
         <div class="card">
             <table class="table display nowrap" id="pemesanan-table" style="width: 80%;">
@@ -292,7 +297,8 @@
             console.log(pemesananId);
             console.log(selectedPemesanan);
             if (selectedPemesanan) {
-                console.log(convertDate(selectedPemesanan.tanggal_sewa));
+                console.log(convertDate(selectedPemesanan.kembali));
+                console.log(convertDate(selectedPemesanan.tanggal_kembali));
                 // $.each(selectedPemesanan, function(key, value) {
                 //     if (value === '1970-01-01 00:00:00') {
                 //         // Set value to today's date
@@ -313,7 +319,7 @@
                 $('#deposit').val(selectedPemesanan.deposit);
                 $('#note').val(selectedPemesanan.note);
                 $('#tanggal-di-ambil').val(convertDate(selectedPemesanan.tanggal_di_ambil));
-                $('#kembali').val(selectedPemesanan.kembali);
+                $('#kembali').val(convertDate(selectedPemesanan.kembali));
                 $('#nomor-rekening').val(selectedPemesanan.nomor_rekening);
                 $('#jenis-bank').val(selectedPemesanan.jenis_bank);
                 $('#atas-nama-2').val(selectedPemesanan.atas_nama_2);

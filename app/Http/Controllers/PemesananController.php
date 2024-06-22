@@ -108,7 +108,8 @@ class PemesananController extends Controller
     public function update(UpdatePemesananRequest $request, Pemesanan $pemesanan)
     {
         // dd($pemesanan);
-        $checkGaun = Pemesanan::where('gaun_kode', $request->kode)->where('tanggal_sewa', $request->tanggal_sewa)->exists();
+        $pemesanan = $this->pemesananAvailability($request->gaun_kode, $request->tanggal_ambil, $request->tanggal_kembali);
+        $checkGaun = $pemesanan->exists();
         if ($checkGaun) {
             return redirect()->back()->with('fail', "Gagal mendaftarkan pesanan, gaun dengan kode $request->kode telah disewakan pada tanggal tersebut");
         }
@@ -169,8 +170,32 @@ class PemesananController extends Controller
         if ($tanggalAkhir == null) {
             $tanggalAkhir = now();
         }
-        if ($request->gaun != null) $pemesanan->where('gaun_kode', $request->gaun);
-        if ($request->tanggal_awal != null) {
+        $pemesanan = $this->pemesananAvailability($request->gaun, $tanggalAwal, $tanggalAkhir);
+        // if ($request->gaun != null) $pemesanan->where('gaun_kode', $request->gaun);
+        // if ($request->tanggal_awal != null) {
+        //     $pemesanan->where(function ($query) use ($tanggalAwal, $tanggalAkhir) {
+        //         $query->whereBetween('tanggal_ambil', [$tanggalAwal, $tanggalAkhir])
+        //             ->orWhereBetween('tanggal_kembali', [$tanggalAwal, $tanggalAkhir])
+        //             ->orWhere(function ($subQuery) use ($tanggalAwal, $tanggalAkhir) {
+        //                 $subQuery->where('tanggal_ambil', '<=', $tanggalAwal)
+        //                     ->where('tanggal_kembali', '>=', $tanggalAkhir);
+        //             });
+        //     });
+        // }
+        $pemesanans = $pemesanan->get();
+        if (count($pemesanans) >= 1) {
+            $formattedPemesanans = $this->formatPemesananNota($this->formatTanggalPemesanan($pemesanans));
+            return response()->json(['is_available' => false, 'data' => $formattedPemesanans]);
+        } else {
+            $formattedPemesanans = $this->formatTanggalPemesanan(Pemesanan::all());
+            return response()->json(['is_available' => true, 'data' => $formattedPemesanans]);
+        }
+    }
+
+    public function pemesananAvailability($kodeGaun, $tanggalAwal, $tanggalAkhir){
+        $pemesanan = Pemesanan::orderBy('id', 'DESC');
+        if ($kodeGaun != null) $pemesanan->where('gaun_kode', $kodeGaun);
+        if ($tanggalAwal != null) {
             $pemesanan->where(function ($query) use ($tanggalAwal, $tanggalAkhir) {
                 $query->whereBetween('tanggal_ambil', [$tanggalAwal, $tanggalAkhir])
                     ->orWhereBetween('tanggal_kembali', [$tanggalAwal, $tanggalAkhir])
@@ -180,14 +205,7 @@ class PemesananController extends Controller
                     });
             });
         }
-        $pemesanans = $pemesanan->get();
-        if (count($pemesanans) >= 1) {
-            $formattedPemesanans = $this->formatPemesananNota($this->formatTanggalPemesanan($pemesanans));
-            return response()->json(['is_available' => false, 'data' => $formattedPemesanans]);
-        } else {
-            $formattedPemesanans = $this->formatTanggalPemesanan(Pemesanan::all());
-            return response()->json(['is_available' => true, 'data' => $formattedPemesanans]);
-        }
+        return $pemesanan;
     }
 
     public function formatTanggalPemesanan($pemesanans)
