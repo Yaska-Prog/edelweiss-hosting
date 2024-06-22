@@ -108,10 +108,12 @@ class PemesananController extends Controller
     public function update(UpdatePemesananRequest $request, Pemesanan $pemesanan)
     {
         // dd($pemesanan);
-        $pemesanan = $this->pemesananAvailability($request->gaun_kode, $request->tanggal_ambil, $request->tanggal_kembali);
-        $checkGaun = $pemesanan->exists();
-        if ($checkGaun) {
-            return redirect()->back()->with('fail', "Gagal mendaftarkan pesanan, gaun dengan kode $request->kode telah disewakan pada tanggal tersebut");
+        if($pemesanan->tanggal_ambil != $request->tanggal_ambil || $pemesanan->tanggal_kembali !=  $request->tanggal_kembali){
+            $pemesanan = $this->pemesananAvailability($request->gaun_kode, $request->tanggal_ambil, $request->tanggal_kembali);
+            $checkGaun = $pemesanan->exists();
+            if ($checkGaun) {
+                return redirect()->back()->with('fail', "Gagal mendaftarkan pesanan, gaun dengan kode $request->kode telah disewakan pada tanggal tersebut");
+            }
         }
         Pemesanan::where('id', $pemesanan->id)->update([
             'no_nota' => $request->no_nota,
