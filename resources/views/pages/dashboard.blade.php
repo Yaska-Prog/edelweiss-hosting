@@ -10,6 +10,18 @@
         .edit-gaun-btn {
             margin-right: 20px;
         }
+
+        .pagination-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            max-width: 75vw;
+            /* 75% of the viewport width */
+            margin: 0 auto;
+        }
+
+        .pagination-wrap .page-item {
+            margin: 2px;
+        }
     </style>
 @endsection
 
@@ -204,21 +216,40 @@
             function renderPagination(totalItems) {
                 var totalPages = Math.ceil(totalItems / itemsPerPage);
                 var paginationHtml =
-                    '<nav aria-label="Page navigation"><ul class="pagination justify-content-center">';
+                    '<nav aria-label="Page navigation"><ul class="pagination pagination-wrap justify-content-center">';
 
+                // Add "Previous" button
+                paginationHtml += `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+        <a class="page-link" href="#" data-page="${currentPage - 1}" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+        </a>
+    </li>`;
+
+                // Add page numbers
                 for (var i = 1; i <= totalPages; i++) {
                     paginationHtml += `<li class="page-item ${i === currentPage ? 'active' : ''}">
-                <a class="page-link" href="#" data-page="${i}">${i}</a>
-            </li>`;
+            <a class="page-link" href="#" data-page="${i}">${i}</a>
+        </li>`;
                 }
+
+                // Add "Next" button
+                paginationHtml += `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+        <a class="page-link" href="#" data-page="${currentPage + 1}" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+        </a>
+    </li>`;
 
                 paginationHtml += '</ul></nav>';
                 $('#gaunList').after(paginationHtml);
 
+                // Event listeners for pagination
                 $('.pagination .page-link').on('click', function(e) {
                     e.preventDefault();
-                    currentPage = parseInt($(this).data('page'));
-                    renderGauns($('#searchQuery').val());
+                    var page = $(this).data('page');
+                    if (page >= 1 && page <= totalPages) {
+                        currentPage = page;
+                        renderGauns($('#searchQuery').val());
+                    }
                 });
             }
 
@@ -239,7 +270,7 @@
                                 selectedAttribute]);
                         } else {
                             return gaun[selectedAttribute].toLowerCase().includes(query
-                            .toLowerCase());
+                                .toLowerCase());
                         }
                     });
 
