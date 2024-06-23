@@ -198,6 +198,30 @@
             var warnaValues = [...new Set(gauns.map(gaun => gaun.warna))];
 
             // Function to render gauns based on search query
+            var itemsPerPage = 20;
+            var currentPage = 1;
+
+            function renderPagination(totalItems) {
+                var totalPages = Math.ceil(totalItems / itemsPerPage);
+                var paginationHtml =
+                    '<nav aria-label="Page navigation"><ul class="pagination justify-content-center">';
+
+                for (var i = 1; i <= totalPages; i++) {
+                    paginationHtml += `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                <a class="page-link" href="#" data-page="${i}">${i}</a>
+            </li>`;
+                }
+
+                paginationHtml += '</ul></nav>';
+                $('#gaunList').after(paginationHtml);
+
+                $('.pagination .page-link').on('click', function(e) {
+                    e.preventDefault();
+                    currentPage = parseInt($(this).data('page'));
+                    renderGauns($('#searchQuery').val());
+                });
+            }
+
             function renderGauns(query, usia = null, selectedWarnas = []) {
                 var selectedAttribute = $('#search-gaun-param').val();
                 $('#loadingIndicator').removeClass('d-none');
@@ -205,6 +229,8 @@
                 setTimeout(function() {
                     $('#loadingIndicator').addClass('d-none');
                     $('#gaunList').empty();
+                    $('.pagination').remove();
+
                     var filteredGauns = gauns.filter(function(gaun) {
                         if (selectedAttribute == 'usia') {
                             return gaun[selectedAttribute].toLowerCase() == usia.toLowerCase();
@@ -213,41 +239,46 @@
                                 selectedAttribute]);
                         } else {
                             return gaun[selectedAttribute].toLowerCase().includes(query
-                                .toLowerCase());
+                            .toLowerCase());
                         }
                     });
-                    if (filteredGauns.length > 0) {
+
+                    var startIndex = (currentPage - 1) * itemsPerPage;
+                    var endIndex = startIndex + itemsPerPage;
+                    var paginatedGauns = filteredGauns.slice(startIndex, endIndex);
+
+                    if (paginatedGauns.length > 0) {
                         $('#gaunList').removeClass('d-none');
-                        filteredGauns.forEach(function(gaun) {
-                            // Card Component
-                            $('#gaunList').append(
-                                '<div class="col-md-4">' +
-                                '<div class="card-body">' +
-                                '<div class="card">' +
-                                '<img src="' + baseUrl + '/' + gaun.gambar +
-                                '" class="card-img-top gaun-img" alt="..." data-toggle="modal" data-target="#image-preview-modal">' +
-                                '<div class="card-body">' +
-                                '<h5 class="card-title">' + gaun.kode + '</h5>' +
-                                '<h6 class="card-text">Harga Gaun: ' + formatCurrency(gaun
-                                    .harga) + '</h6>' +
-                                '<h6 class="card-text">Warna Gaun: ' + gaun.warna + '</h6>' +
-                                '<h6 class="card-text">Usia pengguna Gaun: ' + gaun.usia +
-                                '</h6>' +
-                                '<button type="button" data-toggle="modal" data-target="#edit-gaun-modal" data-gambar="' +
-                                gaun.gambar + '" data-kode="' + gaun.kode + '" data-warna="' +
-                                gaun.warna + '" data-harga="' + formatCurrency(gaun.harga) +
-                                '" data-usia="' +
-                                gaun.usia +
-                                '" class="btn btn-primary edit-gaun-btn">Edit</button>' +
-                                '<button type="button" data-toggle="modal" data-target="#delete-gaun-modal" data-kode="' +
-                                gaun.kode +
-                                '" class="btn btn-danger delete-gaun-btn">Delete</button>' +
-                                '</div>' +
-                                '</div>' +
-                                '</div>' +
-                                '</div>'
-                            );
+                        paginatedGauns.forEach(function(gaun) {
+                            $('#gaunList').append(`
+                        <div class="col-md-4">
+                            <div class="card-body">
+                                <div class="card">
+                                    <img src="${baseUrl}/${gaun.gambar}" class="card-img-top gaun-img" alt="..." data-toggle="modal" data-target="#image-preview-modal">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${gaun.kode}</h5>
+                                        <h6 class="card-text">Harga Gaun: ${formatCurrency(gaun.harga)}</h6>
+                                        <h6 class="card-text">Warna Gaun: ${gaun.warna}</h6>
+                                        <h6 class="card-text">Usia pengguna Gaun: ${gaun.usia}</h6>
+                                        <button type="button" data-toggle="modal" data-target="#edit-gaun-modal" 
+                                            data-gambar="${gaun.gambar}" 
+                                            data-kode="${gaun.kode}" 
+                                            data-warna="${gaun.warna}" 
+                                            data-harga="${formatCurrency(gaun.harga)}" 
+                                            data-usia="${gaun.usia}" 
+                                            class="btn btn-primary edit-gaun-btn">Edit</button>
+                                        <button type="button" data-toggle="modal" data-target="#delete-gaun-modal" 
+                                            data-kode="${gaun.kode}" 
+                                            class="btn btn-danger delete-gaun-btn">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `);
                         });
+                        renderPagination(filteredGauns.length);
+                    } else {
+                        $('#gaunList').append('<p>No results found.</p>');
                     }
                 }, 500);
             }
