@@ -198,7 +198,7 @@
             var warnaValues = [...new Set(gauns.map(gaun => gaun.warna))];
 
             // Function to render gauns based on search query
-            var itemsPerPage = 20;
+            var itemsPerPage = 15;
             var currentPage = 1;
 
             function renderPagination(totalItems) {
